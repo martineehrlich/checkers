@@ -5,9 +5,10 @@ class Board
 
   attr_reader :rows
 
-  def initialize
+  def initialize(fill_board = false)
     @rows = Array.new(8) { Array.new(8) }
-    make_starting_grid
+    make_starting_grid(fill_board)
+    render
   end
 
   def [](pos)
@@ -40,8 +41,22 @@ class Board
   end
 
   def on_board?(pos)
-    pos = row, col
+    row, col = pos
     row.between?(0,7) && col.between?(0,7)
+  end
+
+  def dup
+    duped_board = Board.new(false)
+
+    pieces.each do |piece|
+      piece.class.new(piece.color, duped_board, piece.pos)
+    end
+
+    duped_board
+  end
+
+  def pieces
+    @rows.flatten.compact
   end
 
   def render
@@ -49,12 +64,11 @@ class Board
     output = rows.map.with_index do |row, idx|
       row.map do |piece|
         # debugger if !piece.nil?
-        piece.nil? ? "  " : piece.symbol
+        piece.nil? ? "[ ]" : piece.symbol
       end.join(" ")
     end.join("\n")
     puts output
-
-end
+  end
 
 
 end
