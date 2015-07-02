@@ -1,5 +1,6 @@
 require 'colorize'
 require 'byebug'
+require_relative 'error'
 class Piece
 
   attr_reader :color, :board
@@ -39,28 +40,41 @@ class Piece
     end
   end
 
-  # def perform_moves!(move_sequence)
-  #   if move_sequence.length == 1
-  #     if perform_slide(move_sequence[0]) #is a valid move
-  #     else
-  #       perform_jump(move_sequence[0])
-  #     end
-  #   else
-  #     perform_jump(move_sequence.shift) until move_sequence.empty?
-  #   end
-  # end
-  #
-  # def valid_move_seq?
-  #
-  # end
-  #
-  # def perform_moves
-  #   if valid_move_seq
-  #     perform_moves!
-  #   else
-  #     raises an InvalidMoveError
-  #   end
-  # end
+  def perform_moves!(move_sequence)
+      if move_sequence.length == 1
+        if self.slide_moves.include?(move_sequence[0])
+          perform_slide(move_sequence[0])
+        elsif self.jump_moves.include?(move_sequence[0])
+          perform_jump(move_sequence[0])
+        else
+          raise InvalidMoveError
+        end
+      else
+        move_sequence.length.times do |i|
+          perform_jump(move_sequence[i])
+        end
+      end
+  end
+
+  def valid_move_seq?(move_sequence)
+    test_board = board.dup
+    test_piece = test_board[self.pos]
+    begin
+      test_piece.perform_moves!(move_sequence)
+    rescue
+      false
+    else
+      true
+    end
+  end
+
+  def perform_moves(move_sequence)
+    if valid_move_seq?(move_sequence)
+      perform_moves!(move_sequence)
+    else
+      raise InvalidMoveError
+    end
+  end
 
   def jumps
     (self.slides).map do |move|
@@ -68,16 +82,28 @@ class Piece
     end
   end
 
+  def slide_moves
+    moves = []
+    row, col = @pos
+    slides.each do |slide|
+    test_pos = [row + slide[0], col + slide[1]]
+    if board.on_board?(test_pos) && board[test_pos].nil?
+      moves << test_pos
+    end
+  end
+  moves
+end
+
   def moves
     moves = []
-      row, col = @pos
-    slides.each do |slide|
-      test_pos = [row + slide[0], col + slide[1]]
-      if board.on_board?(test_pos) && board[test_pos].nil?
-        moves << test_pos
-      end
-    end
+    moves.concat(slide_moves)
+    moves.concat(jump_moves)
+    moves
+  end
 
+  def jump_moves
+    moves = []
+    row, col = @pos
     jumps.each_with_index do |jump, idx|
       pos = [row + jump[0], col + jump[1]]
       mid = [(row + slides[idx][0]), (col + slides[idx][1])]
@@ -91,20 +117,19 @@ class Piece
 end
 
   def perform_slide(new_pos)
-    if moves.include?(new_pos)
+    if slide_moves.include?(new_pos)
       board[self.pos] = nil
       self.pos = new_pos
       board[new_pos] = self
     else
-      # raise ArgumentError
-      puts "not a valid move"
+      raise InvalidMoveError
     end
     maybe_promote
     board.render
   end
 
   def perform_jump(new_pos)
-    if moves.include?(new_pos)
+    if jump_moves.include?(new_pos)
       row, col = self.pos
       new_row, new_col = new_pos
       mid = [(row + new_row) / 2, (col + new_col) / 2 ]
@@ -113,7 +138,7 @@ end
       board[new_pos] = self
       board[mid] = nil
     else
-      puts "not a valid move"
+      raise InvalidMoveError
     end
     maybe_promote
     board.render

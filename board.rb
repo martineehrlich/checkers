@@ -1,5 +1,6 @@
 require_relative 'piece'
 require 'byebug'
+require_relative 'error'
 
 class Board
 
@@ -22,6 +23,9 @@ class Board
 
   def add_piece(piece, pos)
     self[pos] = piece
+  end
+  def won?
+    pieces.all? { |piece| piece.color == :red } || pieces.all? { |piece| piece.color == :black }
   end
 
   def place_pieces(color)
@@ -50,7 +54,7 @@ class Board
     duped_board = Board.new(false)
 
     pieces.each do |piece|
-      piece.class.new(piece.color, piece.pos, duped_board)
+      piece.class.new(piece.color, piece.pos.dup, duped_board)
     end
 
     duped_board
