@@ -39,27 +39,28 @@ class Piece
     end
   end
 
-  def perform_moves!(move_sequence)
-    if move_sequence.length == 1
-      if perform_slide(move_sequence[0]) #is a valid move
-      else
-        perform_jump(move_sequence[0])
-      end
-    else
-      perform_jump(move_sequence.shift) until move_sequence.empty?
-    end
-  end
-
-  def valid_move_seq?
-  end
-
-  def perform_moves
-    if valid_move_seq
-      perform_moves!
-    else
-      raises an InvalidMoveError
-    end
-  end
+  # def perform_moves!(move_sequence)
+  #   if move_sequence.length == 1
+  #     if perform_slide(move_sequence[0]) #is a valid move
+  #     else
+  #       perform_jump(move_sequence[0])
+  #     end
+  #   else
+  #     perform_jump(move_sequence.shift) until move_sequence.empty?
+  #   end
+  # end
+  #
+  # def valid_move_seq?
+  #
+  # end
+  #
+  # def perform_moves
+  #   if valid_move_seq
+  #     perform_moves!
+  #   else
+  #     raises an InvalidMoveError
+  #   end
+  # end
 
   def jumps
     (self.slides).map do |move|

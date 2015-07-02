@@ -5,8 +5,7 @@ class Board
 
   attr_reader :rows
 
-  def initialize(fill_board = false)
-    @rows = Array.new(8) { Array.new(8) }
+  def initialize(fill_board = true)
     make_starting_grid(fill_board)
     render
   end
@@ -35,7 +34,9 @@ class Board
     end
   end
 
-  def make_starting_grid
+  def make_starting_grid(fill_board)
+    @rows = Array.new(8) { Array.new(8) }
+    return unless fill_board
     place_pieces(:black)
     place_pieces(:red)
   end
@@ -49,7 +50,7 @@ class Board
     duped_board = Board.new(false)
 
     pieces.each do |piece|
-      piece.class.new(piece.color, duped_board, piece.pos)
+      piece.class.new(piece.color, piece.pos, duped_board)
     end
 
     duped_board
