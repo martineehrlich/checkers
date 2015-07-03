@@ -67,12 +67,23 @@ class Board
   def render
     system("clear")
     output = rows.map.with_index do |row, idx|
-      row.map do |piece|
-        # debugger if !piece.nil?
-        piece.nil? ? "[ ]" : piece.symbol
-      end.join(" ")
+      row.map.with_index do |piece, idx2|
+        pos = [idx, idx2]
+        node = piece.nil? ? "  " : piece.symbol
+        display_squares(pos, node)
+      end.join("")
     end.join("\n")
     puts output
+  end
+
+  def display_squares(pos, node)
+    row_idx, col_idx = pos
+    if (row_idx + col_idx).even?
+      background = :red
+    else
+      background = :blue
+    end
+    node.to_s.colorize(background: background)
   end
 
 

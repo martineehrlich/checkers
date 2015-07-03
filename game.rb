@@ -15,7 +15,6 @@ class Game
     board.render
     until game_over?
       puts "it's #{players[turn].name}'s turn"
-        e = nil
       take_turn
       change_turn
     end
@@ -23,6 +22,7 @@ class Game
   end
 
   def take_turn
+    e = nil
     begin
       board.render
       puts e.message if e

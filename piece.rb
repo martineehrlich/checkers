@@ -23,7 +23,7 @@ class Piece
   end
 
   def symbol
-    self.color == :black ? "[0]".colorize(:black) : "[0]".colorize(:red)
+    self.color == :black ? "⚫ " :  "⚪ ".colorize(:red)
   end
 
   def king_moves
