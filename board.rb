@@ -1,6 +1,6 @@
 require_relative 'piece'
 require 'byebug'
-require_relative 'error'
+
 
 class Board
 

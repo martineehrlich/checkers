@@ -121,6 +121,7 @@ end
       board[self.pos] = nil
       self.pos = new_pos
       board[new_pos] = self
+      #make move helper method
     else
       raise InvalidMoveError
     end
@@ -138,7 +139,7 @@ end
       board[new_pos] = self
       board[mid] = nil
     else
-      raise InvalidMoveError
+      raise InvalidMoveError => e
     end
     maybe_promote
     board.render
